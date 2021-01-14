@@ -1,6 +1,4 @@
 
-
-
 class Groups {
 	constructor() {
 		this.data = new Object();

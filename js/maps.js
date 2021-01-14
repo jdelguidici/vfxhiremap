@@ -4,7 +4,7 @@
 // CONSTANTS
 
 const API_KEY = "AIzaSyDN2xdnffOxN2A_R5uBVI81UwFqjisekxg";
-const CLUSTER_MARKER = "/img/m";
+const CLUSTER_MARKER = "/vfxhiremap/img/m";
 const DEFAULT_ZOOM = 2;
 const DEFAULT_LAT = 15.017689139787977;
 const DEFAULT_LNG = 26.233512501537124;
