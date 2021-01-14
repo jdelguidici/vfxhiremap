@@ -8,6 +8,7 @@ const CLUSTER_MARKER = "/img/m";
 const DEFAULT_ZOOM = 2;
 const DEFAULT_LAT = 15.017689139787977;
 const DEFAULT_LNG = 26.233512501537124;
+const MAX_ZOOM = 18;
 
 /////////////////////////////////////////////////////////////////////
 // GOOGLEMAPS
@@ -45,6 +46,7 @@ class GoogleMaps {
 			disableDefaultUI: true,
 			zoomControl: true,
 			scaleControl: true,
+			maxZoom: MAX_ZOOM,
 		});
 		this.cluster = new MarkerClusterer(this.map, [], {
 			imagePath: CLUSTER_MARKER,
@@ -58,8 +60,12 @@ class GoogleMaps {
 	}
 
 	PlaceMarker(row) {
+		// We need to add some dither into the marker
+		var pos = row.Pos();
+		pos.lat = pos.lat + Math.random() * 0.001;
+		pos.lng = pos.lng + Math.random() * 0.001;
 		const marker = new google.maps.Marker({
-			position: row.Pos(),
+			position: pos,
 			label: row.Label(),
 		});
 		google.maps.event.addListener(marker, "click",this.ClickMarker.bind(this,row,marker));

@@ -37,7 +37,14 @@ class App extends GoogleMaps {
 	LoadedRow(row) {
 		// When row is undefined, parsing has finished
 		if(!row) {
-			console.log("TODO: Finished parsing");
+			// Collect the studios
+			var node = document.getElementById("btn-studio");
+			for(var value of this.data.Studios()) {
+				console.log(value);
+				var li = document.createElement("li");				
+				li.innerHTML = "<a class=\"dropdown-item\" href=\"#\">" + value + "</a>";
+				node.appendChild(li);
+			}
 			return
 		}
 		// Place marker
