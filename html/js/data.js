@@ -1,0 +1,107 @@
+
+
+
+class Data {
+	constructor(url) {
+		this.url = url
+		this.rows = new Array();
+	}
+
+	// Download initiates the download of data from the remote source,
+	// when done calls "callback"
+	Download(callback) {
+		Papa.parse(this.url, {
+			download: true,
+			header: true,
+			complete: function (results) {
+				callback();
+			},
+			step: function (row) {
+				if (row.errors.length == 0) {
+					row = new Row(row.data);
+					if (row.isValid()) {
+						callback(row);
+					}
+				}
+			}
+		});
+	}
+}
+
+class Row {
+	constructor(data) {
+		this.data = new Object();
+		for (var key in data) {
+			this.data[key.trim()] = data[key];
+		}
+	}
+	isValid() {
+		if (this.Id() && this.Title() && this.Pos()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	Id() {
+		return this.data["Job Number"];
+	}
+	Label() {
+		return this.Title() + ", " + this.Studio()
+	}
+	Studio() {
+		return this.data["Studio"];
+	}
+	Title() {
+		return this.data["Job"];
+	}
+	Pos() {
+		if (this.data["Latitude"] && this.data["Longitude"]) {
+			var lat = parseFloat(this.data["Latitude"]);
+			var lng = parseFloat(this.data["Longitude"]);
+			return new LatLong(lat, lng)
+		}
+	}
+	toHTML() {
+		var str = "<div><strong>" + this.Title() + "</strong></div>";
+		for (var k in this.data) {
+			switch (k) {
+				case "Studio":
+				case "Job Summary":
+				case "Department":
+					str += "<li><strong>" + k + "</strong>: " + this.data[k] + "</li>";
+					break;
+				default:
+					console.log(">" + k + "<");
+					break;
+			}
+		}
+		return str;
+	}
+	toString() {
+		var str = "<row";
+		if (this.Id()) {
+			str += " id=" + this.Id();
+		}
+		if (this.Title()) {
+			str += " title=" + this.Title();
+		}
+		if (this.Pos()) {
+			str += " pos=" + this.Pos();
+		}
+		return str + ">";
+	}
+}
+
+class LatLong {
+	constructor(lat, lng) {
+		this.lat = lat;
+		this.lng = lng;
+	}
+	toString() {
+		return "<lat=" + this.lat + " lng=" + this.lng + ">"
+	}
+}
+
+
+// EXPORTS
+export { Data as default };
