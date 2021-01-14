@@ -5,7 +5,7 @@ import GoogleMaps from "/js/maps.js";
 /////////////////////////////////////////////////////////////////////
 // CONSTANTS
 
-const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raNW5a9rdQ0HThuTnVAssnSxe3ZWDGDoz3CaAkC8g-fGRZBWOk5_7_3lqGVsiaeIxe5of8r38L1/pub?gid=1805947673&single=true&output=csv";
+const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raNW5a9rdQ0HThuTnVAssnSxe3ZWDGDoz3CaAkC8g-fGRZBWOk5_7_3lqGVsiaeIxe5of8r38L1/pub?gid=728960864&single=true&output=csv";
 const CLUSTER_MARKER = "/img/m";
 
 ////////////////////////////////////////////////////////////////////////////////
