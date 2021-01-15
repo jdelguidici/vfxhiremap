@@ -28,12 +28,10 @@ class App {
         this.map = null;
         this.mapId = mapId;
         this.data = new Data(SPREADSHEET_CSV);
-        this.icon = null;
-        this.clustericon = null;
-        this.markers = null; // L.markerClusterGroup()
-        this.details = null;
+        this.markers = null;        // L.markerClusterGroup()
+        this.details = null;        // bootstrap.Collapse()
     }
-    // Public Functions
+    // Main function
     Main() {
         // Load scripts
         this.importScript(ROOT_URL + "/js/papaparse.min.js",this.loadData.bind(this));        
@@ -41,13 +39,12 @@ class App {
             this.importScript(ROOT_URL + "/js/leaflet.markercluster.js",this.loadCluster.bind(this));   
         }.bind(this));
     }
-    // Private Functions
+    // import script into document and callback when done
     importScript(url,cb) {
         const script = document.createElement('script');
         script.src = url;
         script.async = true;
         script.addEventListener('load',() => {
-            console.log("Loaded: ",url);
             if(cb) {
                 cb();
 
@@ -55,7 +52,8 @@ class App {
         });
         document.body.append(script);
     }
-    // Initialise buttons and details
+    // initialise buttons and details. Map is invalidated (redrawn)
+    // whenever the details window is open or closed
 	loadButtons() {
         this.details = new bootstrap.Collapse(document.getElementById('details'),{
             toggle: false,
@@ -74,24 +72,13 @@ class App {
             this.details.hide();
 		});
     }
-    // Create the map
+    // Create the map and all associated marker icons
     createMap() {
         this.map = L.map(this.mapId).setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
-        this.icon = L.icon({
-            iconUrl: ROOT_URL + "/img/marker-icon.png",
-            shadowUrl: ROOT_URL + "/img/marker-shadow.png",
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            shadowSize: [41,41],
-            popupAnchor: [1, -34],
-        });
-        this.clustericon = L.icon({
-            iconUrl: ROOT_URL + "/img/cluster-icon.png",
-            shadowUrl: ROOT_URL + "/img/marker-shadow.png",
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            shadowSize: [41,41],
-            popupAnchor: [1, -34],
+        this.icon = L.divIcon({
+            className: 'cluster-icon bg-danger text-light',
+            html: '<span class="dot"></span>',
+            popupAnchor: [ 6, 6 ],
         });
         L.tileLayer(TILE_URL,{
             tileSize: 512,
@@ -101,17 +88,25 @@ class App {
             accessToken: MAPBOX_TOKEN,
         }).addTo(this.map);
     }
-    // Loaded cluster library
+    // Loaded cluster library, assume this means everything is
+    // loaded and map can be drawn
     loadCluster() {
         this.createMap();
         this.loadButtons();
         this.markers = L.markerClusterGroup({
             maxClusterRadius: 25,
-            iconCreateFunction: function(cluster) {
-                return this.clustericon;
-            }.bind(this),
+            iconCreateFunction: this.clusterIcon.bind(this),
         });
         this.map.addLayer(this.markers);
+    }
+    // Return the cluster icon with the number of clusters displayed
+    clusterIcon(cluster) {
+        return L.divIcon({
+            className: 'cluster-icon bg-danger text-light',
+            html: "<strong>" + cluster.getChildCount() + "</strong>",
+            iconAnchor: [ 6,6 ],
+            popupAnchor: [ 6, 6 ],
+        });
     }
     // Load the CSV data
     loadData() {
@@ -138,7 +133,6 @@ class App {
     }
     // Marker clicked
     clickMarker(marker,row) {
-        console.log("Marker clicked: " + row);
         // Update card with details
         this.updateDetails(row);
         // Show details
