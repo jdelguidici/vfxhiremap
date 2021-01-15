@@ -22,11 +22,26 @@
 <body>
     <div class="container border mt-2 pb-2">
         <nav class="nav">
-            <a class="nav-link active" aria-current="page" href="#" id="nav-reset">Reset</a>
+            <a class="nav-link active" href="#" id="nav-reset">Reset</a>
         </nav>
-        <div id="map"></div>
+        <div class="row">
+            <div id="map" class="col"></div>
+            <div id="details" class="col collapse">                
+                <div class="card">                    
+                    <div class="card-body position-relative">
+                        <div class="position-absolute top-0 end-0 m-2">
+                            <button id="nav-close" type="button" class="btn-close" aria-label="Close"></button>
+                        </div>
+                        <h5 class="card-title">Card title</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                            the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
 </html>
-

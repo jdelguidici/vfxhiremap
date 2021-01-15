@@ -89,21 +89,8 @@ class Row {
 			return [ lat, lng ];
 		}
 	}
-	toHTML() {
-		var str = "<div><strong>" + this.Title() + "</strong></div>";
-		for (var k in this.data) {
-			switch (k) {
-				case "Studio":
-				case "Job Summary":
-				case "Department":
-					str += "<li><strong>" + k + "</strong>: " + this.data[k] + "</li>";
-					break;
-				default:
-					console.log(">" + k + "<");
-					break;
-			}
-		}
-		return str;
+	Description() {
+		return this.data["Job Summary"];
 	}
 	toString() {
 		var str = "<row";

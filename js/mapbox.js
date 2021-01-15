@@ -31,6 +31,7 @@ class App {
         this.icon = null;
         this.clustericon = null;
         this.markers = null; // L.markerClusterGroup()
+        this.details = null;
     }
     // Public Functions
     Main() {
@@ -54,12 +55,19 @@ class App {
         });
         document.body.append(script);
     }
-    // Initialise buttons
+    // Initialise buttons and details
 	loadButtons() {
+        this.details = new bootstrap.Collapse(document.getElementById('details'),{
+            toggle: false,
+        });
 		document.getElementById("nav-reset").addEventListener("click",() => {
-			this.map.setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
+            this.map.setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
+            this.details.hide();
 		});
-	}
+		document.getElementById("nav-close").addEventListener("click",() => {
+            this.details.hide();
+		});
+    }
     // Create the map
     createMap() {
         this.map = L.map(this.mapId).setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
@@ -113,10 +121,29 @@ class App {
                     title: row.Label(),
                 });
                 marker.bindPopup(row.Label());
+                marker.addEventListener('click',() => {
+                    this.clickMarker(marker,row);
+                });
                 this.markers.addLayer(marker);    
             }
         } else {
             console.log("All data loaded");
         }
+    }
+    // Marker clicked
+    clickMarker(marker,row) {
+        console.log("Marker clicked: " + row);
+        // Update card with details
+        this.updateDetails(row);
+        // Show details
+        this.details.show();
+        // Center the marker in the map
+        this.map.panTo(marker.getLatLng());
+    }
+    // Update details
+    updateDetails(row) {
+        document.querySelector("#details .card-title").innerText = row.Title();
+        document.querySelector("#details .card-subtitle").innerText = row.Studio();
+        document.querySelector("#details .card-text").innerText = row.Description();
     }
 }
