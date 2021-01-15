@@ -71,16 +71,16 @@ class Row {
 		}
 	}
 	Id() {
-		return this.data["Job Number"];
+		return this.data["Job Number"].trim();
 	}
 	Label() {
 		return this.Title() + ", " + this.Studio()
 	}
 	Studio() {
-		return this.data["Studio"];
+		return this.data["Studio"].trim();
 	}
 	Title() {
-		return this.data["Job"];
+		return this.data["Job"].trim();
 	}
 	LatLng() {
 		if (this.data["Latitude"] && this.data["Longitude"]) {
@@ -90,7 +90,7 @@ class Row {
 		}
 	}
 	Description() {
-		return this.data["Job Summary"];
+		return this.data["Job Summary"].trim();
 	}
 	toString() {
 		var str = "<row";
