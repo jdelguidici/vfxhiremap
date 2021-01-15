@@ -60,6 +60,12 @@ class App {
         this.details = new bootstrap.Collapse(document.getElementById('details'),{
             toggle: false,
         });
+        document.getElementById('details').addEventListener('shown.bs.collapse',() => {
+            this.map.invalidateSize();
+        });
+        document.getElementById('details').addEventListener('hidden.bs.collapse',() => {
+            this.map.invalidateSize();
+        });
 		document.getElementById("nav-reset").addEventListener("click",() => {
             this.map.setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
             this.details.hide();
@@ -136,7 +142,9 @@ class App {
         // Update card with details
         this.updateDetails(row);
         // Show details
-        this.details.show();
+        this.details.show();        
+        // Update map size
+        this.map.invalidateSize();
         // Center the marker in the map
         this.map.panTo(marker.getLatLng());
     }
