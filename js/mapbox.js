@@ -29,6 +29,7 @@ class App {
         this.mapId = mapId;
         this.data = new Data(SPREADSHEET_CSV);
         this.icon = null;
+        this.clustericon = null;
         this.markers = null; // L.markerClusterGroup()
     }
     // Public Functions
@@ -70,6 +71,14 @@ class App {
             shadowSize: [41,41],
             popupAnchor: [1, -34],
         });
+        this.clustericon = L.icon({
+            iconUrl: ROOT_URL + "/img/cluster-icon.png",
+            shadowUrl: ROOT_URL + "/img/marker-shadow.png",
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            shadowSize: [41,41],
+            popupAnchor: [1, -34],
+        });
         L.tileLayer(TILE_URL,{
             tileSize: 512,
             maxZoom: MAX_ZOOM,
@@ -83,9 +92,9 @@ class App {
         this.createMap();
         this.loadButtons();
         this.markers = L.markerClusterGroup({
-            maxClusterRadius: 20,
+            maxClusterRadius: 25,
             iconCreateFunction: function(cluster) {
-                return this.icon;
+                return this.clustericon;
             }.bind(this),
         });
         this.map.addLayer(this.markers);

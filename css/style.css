@@ -7,5 +7,6 @@
     background-color: #ccc;
 }
 
-#detail  {
+.cluster {
+    border-radius: 5px;
 }
