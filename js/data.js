@@ -64,7 +64,7 @@ class Row {
 		}
 	}
 	isValid() {
-		if (this.Id() && this.Title() && this.Pos()) {
+		if (this.Id() && this.Title() && this.LatLng()) {
 			return true;
 		} else {
 			return false;
@@ -82,11 +82,11 @@ class Row {
 	Title() {
 		return this.data["Job"];
 	}
-	Pos() {
+	LatLng() {
 		if (this.data["Latitude"] && this.data["Longitude"]) {
 			var lat = parseFloat(this.data["Latitude"]);
 			var lng = parseFloat(this.data["Longitude"]);
-			return new LatLong(lat, lng)
+			return [ lat, lng ];
 		}
 	}
 	toHTML() {
@@ -113,23 +113,12 @@ class Row {
 		if (this.Title()) {
 			str += " title=" + this.Title();
 		}
-		if (this.Pos()) {
-			str += " pos=" + this.Pos();
+		if (this.LatLng()) {
+			str += " latlng=" + this.LatLng();
 		}
 		return str + ">";
 	}
 }
-
-class LatLong {
-	constructor(lat, lng) {
-		this.lat = lat;
-		this.lng = lng;
-	}
-	toString() {
-		return "<lat=" + this.lat + " lng=" + this.lng + ">"
-	}
-}
-
 
 // EXPORTS
 export { Data as default };
