@@ -5,7 +5,7 @@
     <title>VFX Hire | Clustering Demo</title>
 
     <!-- Application -->
-    <script src="/vfxhiremap/js/mapbox.js" type="module"></script>
+    <script src="/vfxhiremap/js/app.js" type="module"></script>
 
     <!-- Bootstrap -->
     <link href="//cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -21,9 +21,21 @@
 
 <body class="p-2">
     <div class="container-fluid">
-        <nav class="nav nav-pills nav-fill mb-1">
-            <li class="nav-item">
-                <a class="nav-link active" href="#" id="nav-reset">Reset</a>
+        <nav class="nav nav-pills mb-2">
+            <li class="nav-item p-1">
+                <a class="nav-link btn btn-secondary" href="#" id="nav-reset">Reset</a>
+            </li>
+            <li class="nav-item p-1">
+                <a class="nav-link btn btn-secondary dropdown-toggle" href="#" role="button" id="nav-country" data-bs-toggle="dropdown" aria-expanded="false">Country</a>
+                <ul class="dropdown-menu scrollable-menu" id="nav-country-menu" aria-labelledby="nav-country"></ul>                
+            </li>
+            <li class="nav-item p-1">
+                <a class="nav-link btn btn-secondary dropdown-toggle" href="#" role="button" id="nav-dept" data-bs-toggle="dropdown" aria-expanded="false">Department</a>
+                <ul class="dropdown-menu scrollable-menu" id="nav-dept-menu" aria-labelledby="nav-dept"></ul>                
+            </li>
+            <li class="nav-item p-1">
+                <a class="nav-link btn btn-secondary dropdown-toggle" href="#" role="button" id="nav-studio" data-bs-toggle="dropdown" aria-expanded="false">Studio</a>
+                <ul class="dropdown-menu scrollable-menu" id="nav-studio-menu"  aria-labelledby="nav-studio"></ul>                
             </li>
         </nav>
         <div class="row">
@@ -37,9 +49,9 @@
                         <h5 class="card-title"></h5>
                         <h6 class="card-subtitle mb-2 text-muted"></h6>
                         <div class="overflow-scroll p-2" style="max-height: 400px;">
-                            <p class="card-text"></p>
+                            <dl class="row card-list"></dl>
                         </div>
-                        <a href="#" class="btn btn-primary">Apply for this role</a>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSd-7DwHyC7fSF9oHXWj98OMoQjx2vaBZIes2jnWvu6rqa9xZg/viewform?usp=sf_link" class="btn btn-primary">Express an interest in this job</a>
                     </div>
                 </div>
             </div>

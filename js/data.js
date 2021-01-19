@@ -1,66 +1,78 @@
 
-class Groups {
-	constructor() {
-		this.data = new Object();
-	}
-	Add(row) {
-		if(row.Studio()) {
-			this.AddKey("studio",row.Studio());
-		}
-	}
-	AddKey(key,value) {
-		if(!this.data[key]) {
-			this.data[key] = new Map();
-		}
-		this.data[key].set(value,true);
-	}
-	Studios() {
-		var m = this.data["studio"];
-		if(m) {
-			return m.keys();
-		}
-	}
-}
 
+
+import Lookup from "./geocode.js";
+
+////////////////////////////////////////////////////////////////////////////////
+// DATA CLASS
+
+// Data represents the data model for the application including downloading
+// the CSV and parsing it
 class Data {
 	constructor(url) {
 		this.url = url
 		this.rows = new Array();
-		this.groups = new Groups();
+
+		// Create groups which are used for selection of positions
+		this.studio = new Group();
+		this.dept = new Group();
+		this.country = new Group();
 	}
 
 	// Download initiates the download of data from the remote source,
 	// when done calls "callback"
 	Download(callback) {
+		var lookup = new Lookup();
 		Papa.parse(this.url, {
 			download: true,
 			header: true,
-			complete: function (results) {
+			complete: function (_results) {
 				callback();
 			},
 			step: function (row) {
 				if (row.errors.length == 0) {
 					row = new Row(row.data);
 					if (row.isValid()) {
+						// Lookup country from location (Address)		
+						var country = lookup.Lookup(row.Location());
+						if(country) {
+							row.Set("Country",country);
+						} else {
+							console.log("Country lookup failed: ",row.Location());
+						}
+						this.studio.Add(row.Studio(),row);
+						this.dept.Add(row.Dept(),row);
+						this.country.Add(row.Country(),row);
 						callback(row);
 					}
-					this.groups.Add(row);
 				}
 			}.bind(this)
 		});
 	}
 
-	// Return all studios
-	Studios() {
-		return this.groups.Studios();
+	// Return groups
+	StudioGroup() {
+		return this.studio;
+	}
+	DeptGroup() {
+		return this.dept;
+	}
+	CountryGroup() {
+		return this.country;
 	}
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// ROW CLASS
+
+// Row implements a single job position or row in the spreadsheet
 class Row {
 	constructor(data) {
-		this.data = new Object();
+		this.data = new Map();
 		for (var key in data) {
-			this.data[key.trim()] = data[key];
+			var value = "" + data[key];
+			this.data.set(key.trim(),value.trim());
 		}
 	}
 	isValid() {
@@ -70,40 +82,84 @@ class Row {
 			return false;
 		}
 	}
+	Keys() {
+		var keys = new Array();
+		this.data.forEach((_,k) => {
+			keys.push(k);
+		});
+		return keys;
+	}
+	Set(key,value) {
+		this.data.set(key,value);
+	}
+	Get(key) {
+		return this.data.get(key);
+	}
 	Id() {
-		return this.data["Job Number"].trim();
+		return this.data.get("Job Number").trim();
 	}
 	Label() {
 		return this.Title() + ", " + this.Studio()
 	}
 	Studio() {
-		return this.data["Studio"].trim();
+		return this.data.get("Studio");
+	}
+	Dept() {
+		return this.data.get("Department");
+	}
+	Location() {
+		return this.data.get("Location of Job");
+	}
+	Country() {
+		return this.data.get("Country");
 	}
 	Title() {
-		return this.data["Job"].trim();
+		return this.data.get("Job");
 	}
 	LatLng() {
-		if (this.data["Latitude"] && this.data["Longitude"]) {
-			var lat = parseFloat(this.data["Latitude"]);
-			var lng = parseFloat(this.data["Longitude"]);
+		if (this.data.get("Latitude") && this.data.get("Longitude")) {
+			var lat = parseFloat(this.data.get("Latitude"));
+			var lng = parseFloat(this.data.get("Longitude"));
 			return [ lat, lng ];
 		}
 	}
 	Description() {
-		return this.data["Job Summary"].trim();
+		return this.data.get("Job Summary");
 	}
 	toString() {
 		var str = "<row";
 		if (this.Id()) {
 			str += " id=" + this.Id();
-		}
-		if (this.Title()) {
+		}		if (this.Title()) {
 			str += " title=" + this.Title();
 		}
 		if (this.LatLng()) {
 			str += " latlng=" + this.LatLng();
 		}
 		return str + ">";
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// GROUP CLASS
+
+// Group represents the groupings for filtering data
+class Group {
+	constructor() {
+		this.data = new Map();
+	}
+	Add(value) {
+		this.data.set(value,true);
+	}
+	Values() {
+		var keys = new Array();
+		this.data.forEach((_v,k) => {
+			keys.push(k);
+		});
+		return keys;
+	}
+	onClick(value) {
+		console.log("Clicked",value);
 	}
 }
 
