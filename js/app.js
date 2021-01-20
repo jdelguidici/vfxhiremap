@@ -27,7 +27,7 @@ class App {
     constructor(mapId) {
         this.map = null;
         this.mapId = mapId;
-        this.data = new Data(SPREADSHEET_CSV);
+        this.data = new Data(SPREADSHEET_CSV,this.onSelect.bind(this));
         this.markers = null;        // L.markerClusterGroup()
         this.details = null;        // bootstrap.Collapse()
     }
@@ -61,16 +61,23 @@ class App {
             toggle: false,
         });
         document.getElementById('details').addEventListener('shown.bs.collapse', () => {
+            // Reset map state
             this.map.invalidateSize();
         });
         document.getElementById('details').addEventListener('hidden.bs.collapse', () => {
+            // Reset map state
             this.map.invalidateSize();
         });
         document.getElementById("nav-reset").addEventListener("click", () => {
+            // Reset map state
             this.map.setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
+            // Hide details pane
             this.details.hide();
+            // Reset data
+            this.data.Reset();
         });
         document.getElementById("nav-close").addEventListener("click", () => {
+            // Hide details pane
             this.details.hide();
         });
     }
@@ -85,6 +92,8 @@ class App {
             id: 'mapbox/light-v10',
             accessToken: MAPBOX_TOKEN,
         }).addTo(this.map);
+        // Nasty hack oops
+        document.getElementsByClassName( 'leaflet-control-attribution' )[0].style.fontSize = '0px';
     }
 
     // Loaded cluster library, assume this means everything is
@@ -101,7 +110,7 @@ class App {
 
     // Return the icon for a job
     jobIcon(row) {
-        return L.icon({ //add this new icon
+        return L.icon({
             iconUrl: ROOT_URL + "/img/geo-alt-fill.svg",
             iconSize: [30, 75],
             iconAnchor: [15, 45],
@@ -110,7 +119,8 @@ class App {
         });
     }
 
-    // Return the cluster icon with the number of clusters displayed
+    // Return the cluster icon with the number of jobs the
+    // cluster represents
     clusterIcon(cluster) {
         var img = document.createElement("img");
         img.src = ROOT_URL + "/img/geo-alt-fill.svg";
@@ -147,6 +157,7 @@ class App {
                 });
             }
         } else {
+            // When all the rows have been loaded, populate dropdowns
             this.populateDropdown("#nav-country-menu", this.data.CountryGroup());
             this.populateDropdown("#nav-dept-menu", this.data.DeptGroup());
             this.populateDropdown("#nav-studio-menu", this.data.StudioGroup());
@@ -167,13 +178,27 @@ class App {
 
     // Popup closed, close details pane
     onPopupClose(marker,row) {
-        this.details.hide();
+        // TODO: We may have selected a different popup
+        //this.details.hide();
+    }
+
+    // Update filtering display
+    onSelect(id,title,value) {
+        if(value) {
+            document.querySelector("#" + id).innerText = title + ": " + value;
+        } else {
+            document.querySelector("#" + id).innerText = title;
+        }
     }
 
     // Update details
     updateDetails(row) {
+        // Scroll pane to top
+        document.querySelector("#details .card-list").parentNode.scrollTop = 0;
+        // Set title, subtitle
         document.querySelector("#details .card-title").innerText = row.Title();
         document.querySelector("#details .card-subtitle").innerText = row.Studio();
+        // List of details
         document.querySelector("#details .card-list").innerHTML = "";
         row.Keys().forEach((k) => {
             // Exclude certain items
@@ -223,10 +248,13 @@ class App {
         a.href = "#";
         a.innerText = value;
         a.addEventListener('click', () => {
+            // Disable dropdown actives
             document.querySelectorAll(q + " a.dropdown-item").forEach((node) => {
                 node.className = "dropdown-item";
             });
+            // Add in one active
             a.className = "dropdown-item active";
+            // Fire event to filter markers to group
             group.onClick(value);
         })
         return li;

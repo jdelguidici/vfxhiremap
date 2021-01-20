@@ -9,14 +9,14 @@ import Lookup from "./geocode.js";
 // Data represents the data model for the application including downloading
 // the CSV and parsing it
 class Data {
-	constructor(url) {
+	constructor(url,cb) {
 		this.url = url
 		this.rows = new Array();
 
 		// Create groups which are used for selection of positions
-		this.studio = new Group();
-		this.dept = new Group();
-		this.country = new Group();
+		this.studio = new Group("nav-studio","Studio",cb);
+		this.dept = new Group("nav-dept","Department",cb);
+		this.country = new Group("nav-country","Country",cb);
 	}
 
 	// Download initiates the download of data from the remote source,
@@ -48,6 +48,13 @@ class Data {
 				}
 			}.bind(this)
 		});
+	}
+
+	// Reset selectors
+	Reset() {
+		this.studio.onClick();
+		this.dept.onClick();
+		this.country.onClick();
 	}
 
 	// Return groups
@@ -148,7 +155,10 @@ class Row {
 
 // Group represents the groupings for filtering data
 class Group {
-	constructor() {
+	constructor(id,title,cb) {
+		this.id = id;
+		this.title = title;
+		this.cb = cb;
 		this.data = new Map();
 	}
 	Add(value) {
@@ -162,7 +172,11 @@ class Group {
 		return keys;
 	}
 	onClick(value) {
-		console.log("Clicked",value);
+		if(this.cb) {
+			this.cb(this.id,this.title,value);
+		} else {
+			console.log("Clicked",this.title,"=>",value);
+		}
 	}
 }
 
