@@ -14,9 +14,9 @@ class Data {
 		this.rows = new Array();
 
 		// Create groups which are used for selection of positions
-		this.studio = new Group("nav-studio","Studio",cb);
-		this.dept = new Group("nav-dept","Department",cb);
-		this.country = new Group("nav-country","Country",cb);
+		this.studio = new Group("nav-studio",cb);
+		this.dept = new Group("nav-dept",cb);
+		this.country = new Group("nav-country",cb);
 	}
 
 	// Download initiates the download of data from the remote source,
@@ -40,6 +40,8 @@ class Data {
 						} else {
 							console.log("Country lookup failed: ",row.Location());
 						}
+						// Add row to the master list of rows and the groupings
+						this.rows.push(row);
 						this.studio.Add(row.Studio(),row);
 						this.dept.Add(row.Dept(),row);
 						this.country.Add(row.Country(),row);
@@ -66,6 +68,11 @@ class Data {
 	}
 	CountryGroup() {
 		return this.country;
+	}
+
+	// Return number of positions
+	Counter() {
+		return this.rows.length;
 	}
 }
 
@@ -155,16 +162,20 @@ class Row {
 
 // Group represents the groupings for filtering data
 class Group {
-	constructor(id,title,cb) {
+	constructor(id,cb) {
 		this.id = id;
-		this.title = title;
 		this.cb = cb;
 		this.data = new Map();
 	}
-	Add(value) {
-		this.data.set(value,true);
+	Add(value,row) {
+		// Create a new array
+		if(!this.data.has(value)) {
+			this.data.set(value,new Array());
+		}
+		// Append row to array
+		this.data.get(value).push(row);	
 	}
-	Values() {
+	Keys() {
 		var keys = new Array();
 		this.data.forEach((_v,k) => {
 			keys.push(k);
@@ -172,10 +183,14 @@ class Group {
 		return keys;
 	}
 	onClick(value) {
+		var rows = new Array();
+		if(value) {
+			rows = this.data.get(value);
+		}
 		if(this.cb) {
-			this.cb(this.id,this.title,value);
+			this.cb(this.id,value,rows);
 		} else {
-			console.log("Clicked",this.title,"=>",value);
+			console.log("Clicked",this.id,"=>",value);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 
 import Data from "./data.js";
+import { CounterView, DropdownView } from "./view.js";
 
 /////////////////////////////////////////////////////////////////////
 // CONSTANTS
@@ -27,9 +28,15 @@ class App {
     constructor(mapId) {
         this.map = null;
         this.mapId = mapId;
-        this.data = new Data(SPREADSHEET_CSV,this.onSelect.bind(this));
+        this.data = new Data(SPREADSHEET_CSV, this.onSelectDropdownItem.bind(this));
         this.markers = null;        // L.markerClusterGroup()
         this.details = null;        // bootstrap.Collapse()
+
+        // Views
+        this.counterView = new CounterView("nav-counter");
+        this.countryView = new DropdownView("nav-country","nav-country-menu","Country");
+        this.deptView = new DropdownView("nav-dept","nav-dept-menu","Department");
+        this.studioView = new DropdownView("nav-studio","nav-studio-menu","Studio");
     }
 
     // Main function
@@ -73,8 +80,12 @@ class App {
             this.map.setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
             // Hide details pane
             this.details.hide();
+
             // Reset data
             this.data.Reset();
+
+            // Update counter view
+            this.counterView.Set(this.data.Counter());
         });
         document.getElementById("nav-close").addEventListener("click", () => {
             // Hide details pane
@@ -92,8 +103,9 @@ class App {
             id: 'mapbox/light-v10',
             accessToken: MAPBOX_TOKEN,
         }).addTo(this.map);
+
         // Nasty hack oops
-        document.getElementsByClassName( 'leaflet-control-attribution' )[0].style.fontSize = '0px';
+        document.getElementsByClassName('leaflet-control-attribution')[0].style.fontSize = '0px';
     }
 
     // Loaded cluster library, assume this means everything is
@@ -152,15 +164,18 @@ class App {
                     this.onClickMarker(marker, row);
                 });
                 this.markers.addLayer(marker);
-                marker.addEventListener('popupclose',() => {
+                marker.addEventListener('popupclose', () => {
                     this.onPopupClose(marker, row);
                 });
             }
         } else {
             // When all the rows have been loaded, populate dropdowns
-            this.populateDropdown("#nav-country-menu", this.data.CountryGroup());
-            this.populateDropdown("#nav-dept-menu", this.data.DeptGroup());
-            this.populateDropdown("#nav-studio-menu", this.data.StudioGroup());
+            this.countryView.Set(this.data.CountryGroup());
+            this.deptView.Set(this.data.DeptGroup());
+            this.studioView.Set(this.data.StudioGroup());
+
+            // Update counter view
+            this.counterView.Set(this.data.Counter());
         }
     }
 
@@ -177,18 +192,35 @@ class App {
     }
 
     // Popup closed, close details pane
-    onPopupClose(marker,row) {
-        // TODO: We may have selected a different popup
+    onPopupClose(marker, row) {
+        // TODO: We may have selected a different popup, this
+        // logic needs to be developed with cancellation of hide
+        // if other job is selected
         //this.details.hide();
     }
 
     // Update filtering display
-    onSelect(id,title,value) {
-        if(value) {
-            document.querySelector("#" + id).innerText = title + ": " + value;
-        } else {
-            document.querySelector("#" + id).innerText = title;
-        }
+    onSelectDropdownItem(id,value,rows) {
+        // Reset all views
+        this.countryView.Reset();
+        this.deptView.Reset();
+        this.studioView.Reset();
+
+        // Select a value
+        switch(id) {
+        case "nav-country":
+            this.countryView.Select(value);
+            break
+        case "nav-studio":
+            this.studioView.Select(value);
+            break
+        case "nav-dept":
+            this.deptView.Select(value);
+            break    
+        } 
+        
+        // Update counter
+        this.counterView.Set(rows.length);
     }
 
     // Update details
@@ -248,14 +280,10 @@ class App {
         a.href = "#";
         a.innerText = value;
         a.addEventListener('click', () => {
-            // Disable dropdown actives
-            document.querySelectorAll(q + " a.dropdown-item").forEach((node) => {
-                node.className = "dropdown-item";
-            });
-            // Add in one active
-            a.className = "dropdown-item active";
             // Fire event to filter markers to group
             group.onClick(value);
+            // Add in one active
+            a.className = "dropdown-item active";
         })
         return li;
     }
