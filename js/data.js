@@ -77,7 +77,7 @@ class Row {
 	}
 	isValid() {
 		if (this.Id() && this.Title() && this.LatLng()) {
-			return true;
+			return (this.Status() && this.Status() == "live");
 		} else {
 			return false;
 		}
@@ -96,7 +96,10 @@ class Row {
 		return this.data.get(key);
 	}
 	Id() {
-		return this.data.get("Job Number").trim();
+		return this.data.get("Job Number");
+	}
+	Status() {
+		return this.data.get("Job Status").toLowerCase();
 	}
 	Label() {
 		return this.Title() + ", " + this.Studio()
@@ -119,7 +122,7 @@ class Row {
 	LatLng() {
 		if (this.data.get("Latitude") && this.data.get("Longitude")) {
 			var lat = parseFloat(this.data.get("Latitude"));
-			var lng = parseFloat(this.data.get("Longitude"));
+			var lng = parseFloat(this.data.get("Longitude"));			
 			return [ lat, lng ];
 		}
 	}

@@ -4,7 +4,7 @@ import Data from "./data.js";
 /////////////////////////////////////////////////////////////////////
 // CONSTANTS
 
-const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raNW5a9rdQ0HThuTnVAssnSxe3ZWDGDoz3CaAkC8g-fGRZBWOk5_7_3lqGVsiaeIxe5of8r38L1/pub?gid=728960864&single=true&output=csv";
+const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raNW5a9rdQ0HThuTnVAssnSxe3ZWDGDoz3CaAkC8g-fGRZBWOk5_7_3lqGVsiaeIxe5of8r38L1/pub?gid=1805947673&single=true&output=csv";
 const MAPBOX_TOKEN = "pk.eyJ1IjoiZGp0aG9ycGUiLCJhIjoiY2tqeTZ2MXptMGFqYTJvbW5veXN6ZzdmNyJ9.LDOhC3y0Py3W7P1bQ5Vbeg";
 const TILE_URL = "//api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}";
 const ROOT_URL = "/vfxhiremap";
@@ -49,7 +49,6 @@ class App {
         script.addEventListener('load',() => {
             if(cb) {
                 cb();
-
             }
         });
         document.body.append(script);
@@ -79,11 +78,6 @@ class App {
     // Create the map and all associated marker icons
     createMap() {
         this.map = L.map(this.mapId).setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
-        this.icon = L.divIcon({
-            className: 'cluster-icon bg-danger text-light',
-            html: '<span class="dot"></span>',
-            popupAnchor: [ 6, 6 ],
-        });
         L.tileLayer(TILE_URL,{
             tileSize: 512,
             maxZoom: MAX_ZOOM,
@@ -105,14 +99,38 @@ class App {
         this.map.addLayer(this.markers);
     }
 
+    // Return the icon for a job
+    jobIcon(row) {
+        return L.icon({ //add this new icon
+            iconUrl: ROOT_URL + "/img/geo-alt-fill.svg",
+            iconSize:     [30, 75], 
+            iconAnchor:   [15, 45],
+            className: 'job-icon',
+        });
+        /*
+        return L.divIcon({
+            className: 'cluster-icon bg-danger text-light',
+            html: '<span class="dot"></span>',
+            popupAnchor: [ 6, 6 ],
+        });*/
+    }
+
     // Return the cluster icon with the number of clusters displayed
     clusterIcon(cluster) {
+        return L.icon({ //add this new icon
+            iconUrl: ROOT_URL + "/img/geo-alt-fill.svg",
+            iconSize:     [30, 75], 
+            iconAnchor:   [15, 45],
+            className: 'cluster-icon',
+        });
+        /*
         return L.divIcon({
             className: 'cluster-icon bg-danger text-light',
             html: "<strong>" + cluster.getChildCount() + "</strong>",
             iconAnchor: [ 6,6 ],
             popupAnchor: [ 6, 6 ],
         });
+        */
     }
 
     // Load the CSV data
@@ -126,7 +144,7 @@ class App {
             var latlng = row.LatLng();
             if(latlng) {
                 var marker = L.marker(latlng,{
-                    icon: this.icon,
+                    icon: this.jobIcon(row),
                     title: row.Label(),
                 });
                 marker.bindPopup(row.Label());
@@ -159,8 +177,17 @@ class App {
         document.querySelector("#details .card-title").innerText = row.Title();
         document.querySelector("#details .card-subtitle").innerText = row.Studio();
         document.querySelector("#details .card-list").innerHTML = "";
-        row.Keys().forEach((k) => {            
-            this.createListItem(document.querySelector("#details .card-list"),k,row.Get(k));
+        row.Keys().forEach((k) => {  
+            // Exclude certain items
+            switch(k) {
+                case "Longitude":
+                case "Latitude":
+                case "Job Status":
+                case "Country":
+                    break;
+                default:
+                    this.createListItem(document.querySelector("#details .card-list"),k,row.Get(k));
+            }          
         });
     }
 
