@@ -184,6 +184,8 @@ class App {
                 case "Latitude":
                 case "Job Status":
                 case "Country":
+                case "Job":
+                case "Studio":
                     break;
                 default:
                     this.createListItem(document.querySelector("#details .card-list"),k,row.Get(k));
