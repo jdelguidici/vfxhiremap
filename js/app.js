@@ -17,7 +17,7 @@ const MAX_ZOOM = 20;
 // BOOTSTRAP APP
 
 window.addEventListener("DOMContentLoaded", (event) => {
-	new App("map").Main();
+    new App("map").Main();
 });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,19 +35,19 @@ class App {
     // Main function
     Main() {
         // Load scripts
-        this.importScript(ROOT_URL + "/js/papaparse.min.js",this.loadData.bind(this));        
-        this.importScript(ROOT_URL + "/js/leaflet.js",function() {            
-            this.importScript(ROOT_URL + "/js/leaflet.markercluster.js",this.loadCluster.bind(this));   
+        this.importScript(ROOT_URL + "/js/papaparse.min.js", this.loadData.bind(this));
+        this.importScript(ROOT_URL + "/js/leaflet.js", function () {
+            this.importScript(ROOT_URL + "/js/leaflet.markercluster.js", this.loadCluster.bind(this));
         }.bind(this));
     }
 
     // import script into document and callback when done
-    importScript(url,cb) {
+    importScript(url, cb) {
         const script = document.createElement('script');
         script.src = url;
         script.async = true;
-        script.addEventListener('load',() => {
-            if(cb) {
+        script.addEventListener('load', () => {
+            if (cb) {
                 cb();
             }
         });
@@ -56,29 +56,29 @@ class App {
 
     // initialise buttons and details. Map is invalidated (redrawn)
     // whenever the details window is open or closed
-	loadButtons() {
-        this.details = new bootstrap.Collapse(document.getElementById('details'),{
+    loadButtons() {
+        this.details = new bootstrap.Collapse(document.getElementById('details'), {
             toggle: false,
         });
-        document.getElementById('details').addEventListener('shown.bs.collapse',() => {
+        document.getElementById('details').addEventListener('shown.bs.collapse', () => {
             this.map.invalidateSize();
         });
-        document.getElementById('details').addEventListener('hidden.bs.collapse',() => {
+        document.getElementById('details').addEventListener('hidden.bs.collapse', () => {
             this.map.invalidateSize();
         });
-		document.getElementById("nav-reset").addEventListener("click",() => {
-            this.map.setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
+        document.getElementById("nav-reset").addEventListener("click", () => {
+            this.map.setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
             this.details.hide();
-		});
-		document.getElementById("nav-close").addEventListener("click",() => {
+        });
+        document.getElementById("nav-close").addEventListener("click", () => {
             this.details.hide();
-		});
+        });
     }
 
     // Create the map and all associated marker icons
     createMap() {
-        this.map = L.map(this.mapId).setView([DEFAULT_LAT,DEFAULT_LNG],DEFAULT_ZOOM);
-        L.tileLayer(TILE_URL,{
+        this.map = L.map(this.mapId).setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
+        L.tileLayer(TILE_URL, {
             tileSize: 512,
             maxZoom: MAX_ZOOM,
             zoomOffset: -1,
@@ -103,34 +103,24 @@ class App {
     jobIcon(row) {
         return L.icon({ //add this new icon
             iconUrl: ROOT_URL + "/img/geo-alt-fill.svg",
-            iconSize:     [30, 75], 
-            iconAnchor:   [15, 45],
+            iconSize: [30, 75],
+            iconAnchor: [15, 45],
+            popupAnchor: [0, -10],
             className: 'job-icon',
         });
-        /*
-        return L.divIcon({
-            className: 'cluster-icon bg-danger text-light',
-            html: '<span class="dot"></span>',
-            popupAnchor: [ 6, 6 ],
-        });*/
     }
 
     // Return the cluster icon with the number of clusters displayed
     clusterIcon(cluster) {
-        return L.icon({ //add this new icon
-            iconUrl: ROOT_URL + "/img/geo-alt-fill.svg",
-            iconSize:     [30, 75], 
-            iconAnchor:   [15, 45],
-            className: 'cluster-icon',
-        });
-        /*
+        var img = document.createElement("img");
+        img.src = ROOT_URL + "/img/geo-alt-fill.svg";
+        img.className = "cluster-icon";
         return L.divIcon({
-            className: 'cluster-icon bg-danger text-light',
-            html: "<strong>" + cluster.getChildCount() + "</strong>",
-            iconAnchor: [ 6,6 ],
-            popupAnchor: [ 6, 6 ],
-        });
-        */
+            html: img.outerHTML + "<strong>" + cluster.getChildCount() + "</strong>",
+            iconSize: [30, 75],
+            iconAnchor: [15, 45],
+            className: "cluster-marker",
+        })
     }
 
     // Load the CSV data
@@ -140,36 +130,44 @@ class App {
 
     // Place marker when a row is loaded
     loadRow(row) {
-        if(row) {
+        if (row) {
             var latlng = row.LatLng();
-            if(latlng) {
-                var marker = L.marker(latlng,{
+            if (latlng) {
+                var marker = L.marker(latlng, {
                     icon: this.jobIcon(row),
                     title: row.Label(),
                 });
                 marker.bindPopup(row.Label());
-                marker.addEventListener('click',() => {
-                    this.clickMarker(marker,row);
+                marker.addEventListener('click', () => {
+                    this.onClickMarker(marker, row);
                 });
-                this.markers.addLayer(marker);    
+                this.markers.addLayer(marker);
+                marker.addEventListener('popupclose',() => {
+                    this.onPopupClose(marker, row);
+                });
             }
         } else {
-            this.populateDropdown("#nav-country-menu",this.data.CountryGroup());
-            this.populateDropdown("#nav-dept-menu",this.data.DeptGroup());
-            this.populateDropdown("#nav-studio-menu",this.data.StudioGroup());
+            this.populateDropdown("#nav-country-menu", this.data.CountryGroup());
+            this.populateDropdown("#nav-dept-menu", this.data.DeptGroup());
+            this.populateDropdown("#nav-studio-menu", this.data.StudioGroup());
         }
     }
 
     // Marker clicked
-    clickMarker(marker,row) {
+    onClickMarker(marker, row) {
         // Update card with details
         this.updateDetails(row);
         // Show details
-        this.details.show();        
+        this.details.show();
         // Update map size
         this.map.invalidateSize();
         // Center the marker in the map
         this.map.panTo(marker.getLatLng());
+    }
+
+    // Popup closed, close details pane
+    onPopupClose(marker,row) {
+        this.details.hide();
     }
 
     // Update details
@@ -177,9 +175,9 @@ class App {
         document.querySelector("#details .card-title").innerText = row.Title();
         document.querySelector("#details .card-subtitle").innerText = row.Studio();
         document.querySelector("#details .card-list").innerHTML = "";
-        row.Keys().forEach((k) => {  
+        row.Keys().forEach((k) => {
             // Exclude certain items
-            switch(k) {
+            switch (k) {
                 case "Longitude":
                 case "Latitude":
                 case "Job Status":
@@ -188,13 +186,13 @@ class App {
                 case "Studio":
                     break;
                 default:
-                    this.createListItem(document.querySelector("#details .card-list"),k,row.Get(k));
-            }          
+                    this.createListItem(document.querySelector("#details .card-list"), k, row.Get(k));
+            }
         });
     }
 
     // Generate a list item
-    createListItem(node,key,value) {
+    createListItem(node, key, value) {
         var dt = document.createElement("dt");
         var dd = document.createElement("dd");
         dt.innerText = key;
@@ -206,25 +204,25 @@ class App {
     }
 
     // Populate dropdowns
-    populateDropdown(q,group) {
+    populateDropdown(q, group) {
         var node = document.querySelector(q);
-        if(node) {
+        if (node) {
             node.innerHTML = "";
             group.Values().forEach((value) => {
-                node.appendChild(this.createDropdownItem(q,value,group));    
-            });    
-        } 
+                node.appendChild(this.createDropdownItem(q, value, group));
+            });
+        }
     }
 
     // Create a dropdown item
-    createDropdownItem(q,value,group) {
+    createDropdownItem(q, value, group) {
         var a = document.createElement("a");
         var li = document.createElement("li");
         li.appendChild(a);
         a.className = "dropdown-item";
         a.href = "#";
         a.innerText = value;
-        a.addEventListener('click',() => {
+        a.addEventListener('click', () => {
             document.querySelectorAll(q + " a.dropdown-item").forEach((node) => {
                 node.className = "dropdown-item";
             });

@@ -12,7 +12,25 @@
 }
 
 .cluster-icon {
-    filter: invert(0.5) sepia(0.5) saturate(20) hue-rotate(180deg) drop-shadow(1px 1px 1px #111);
+    width: 30px;
+    height: 75px;
+    /*filter: invert(0.5) sepia(0.5) saturate(20) hue-rotate(180deg) drop-shadow(1px 1px 1px #111);*/
+}
+
+.cluster-marker {
+    position: relative;
+    background: none;
+}
+
+.cluster-marker strong {
+    position: absolute;
+    text-align: center;
+    left: 7px;
+    top: 25px;
+    width: 16px;
+    color: white;
+    background-color:black;
+    border-radius: 50%;
 }
 
 .scrollable-menu {
