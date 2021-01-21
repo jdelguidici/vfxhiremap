@@ -74,7 +74,7 @@ is an example which uses bootstrap for styling:
 <div class="container m-2 border rounded">
     <h1 class="h1">Embed the map</h1>
     <div class="ratio ratio-16x9">
-        <iframe src="//djthorpe.github.io/vfxhiremap/" class="col"></iframe>
+        <iframe src="//djthorpe.github.io/vfxhiremap/"></iframe>
     </div>
 </div>
 </body>
