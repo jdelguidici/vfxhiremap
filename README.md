@@ -5,6 +5,10 @@ order to provide job positions on a map.
 
 ![Screenshot](doc/screenshot.png)
 
+View the demo here:
+
+>https://djthorpe.github.io/vfxhiremap/
+
 ## Development
 
 Clone the repository and then run the following to develop locally:
@@ -82,14 +86,14 @@ Your spreadsheet should at a minimum have a header to identify the rows and incl
 
 | Column Name | Notes |
 |-------------|-------|
-| Job Number | Identifier which needs to be populated
-| Job Department | Required for filtering
-| Studio | Required for filtering
-| Location of Job | Required for filtering. Country is interpreted from city or country
-| Latitude | Required for marker. Potentially can be automated later
-| Longitude | Required for marker. Potentially can be automated later
-| Studio | Required for filtering
-| Job Status | Keyword "Live" in this cell is required for display, otherwise not included on map
+| Job Number | Identifier which needs to be populated.
+| Job | The title of the role. Required for display.
+| Department | Required for filtering.
+| Job Status | Keyword "Live" in this cell is required for display, otherwise not included on map.
+| Studio | Required for filtering.
+| Location of Job | Required for filtering. Country is interpreted from city or country within this cell.
+| Latitude | Required for marker. Potentially can be automated later.
+| Longitude | Required for marker. Potentially can be automated later.
 
 When you change the data on your spreadsheet, as long as you are automatically publishing, it should be reflected automatically on the map.
 
