@@ -107,4 +107,20 @@ The following sources & dependencies were used in construction of this applicati
 
 The links above should go through to reference material.
 
+## Achtung
+
+Some information about data, privacy and costs:
+
+ * By publishing your spreadsheet in this manner, all
+   your data is available at the URL and that URL
+   can easily be discovered by other parties who also
+   might want to "grab" your data.
+ * If you do not limit access to map tiles by limiting
+   the scope of the Mapbox access token, you will be
+   liable for additional costs. The current costs (including legitimate costs) are listed [here](https://docs.mapbox.com/accounts/guides/pricing/).
+
+While developing the application I used 4,436 / 200,000 free tile requests. You can check your usage [here](https://account.mapbox.com/). It might be possible to switch to Open Street Map but I don't know if the maps are as nice to look at.
+
+If you need to limit access or costs, let me know and we
+can come up with a plan.
 
