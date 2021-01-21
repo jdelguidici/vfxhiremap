@@ -70,6 +70,11 @@ class Data {
 		return this.country;
 	}
 
+	// Return all rows
+	Values() {
+		return this.rows;
+	}
+
 	// Return number of positions
 	Counter() {
 		return this.rows.length;

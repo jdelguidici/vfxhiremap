@@ -71,3 +71,50 @@ export class DropdownView {
         return li;
     }    
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// DETAIL VIEW
+
+export class DetailView {
+    constructor(node) {
+        this.node = document.getElementById(node);
+    }
+
+    // Set details from row
+    Set(row) {
+        // Scroll pane to top
+        this.node.querySelector(".card-list").parentNode.scrollTop = 0;
+        // Set title, subtitle
+        this.node.querySelector(".card-title").innerText = row.Title();
+        this.node.querySelector(".card-subtitle").innerText = row.Studio();
+        // List of details
+        this.node.querySelector(".card-list").innerHTML = "";
+        row.Keys().forEach((k) => {
+            // Exclude certain items
+            switch (k) {
+                case "Longitude":
+                case "Latitude":
+                case "Job Status":
+                case "Country":
+                case "Job":
+                case "Studio":
+                    break;
+                default:
+                    this.createListItem(this.node.querySelector(".card-list"), k, row.Get(k));
+            }
+        });
+    }
+
+    // Generate a list item
+    createListItem(node, key, value) {
+        var dt = document.createElement("dt");
+        var dd = document.createElement("dd");
+        dt.innerText = key;
+        dt.className = "col-sm-4";
+        dd.innerText = value;
+        dd.className = "col-sm-8";
+        node.appendChild(dt);
+        node.appendChild(dd);
+    }
+}
+

@@ -1,6 +1,6 @@
 
 import Data from "./data.js";
-import { CounterView, DropdownView } from "./view.js";
+import { CounterView, DropdownView, DetailView } from "./view.js";
 
 /////////////////////////////////////////////////////////////////////
 // CONSTANTS
@@ -9,6 +9,8 @@ const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raN
 const MAPBOX_TOKEN = "pk.eyJ1IjoiZGp0aG9ycGUiLCJhIjoiY2tqeTZ2MXptMGFqYTJvbW5veXN6ZzdmNyJ9.LDOhC3y0Py3W7P1bQ5Vbeg";
 const TILE_URL = "//api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}";
 const ROOT_URL = "/vfxhiremap";
+const MARKER_URL = ROOT_URL + "/img/marker-icon.svg";
+const CLUSTER_URL = ROOT_URL + "/img/cluster-icon.svg";
 const DEFAULT_LAT = 15.017689139787977;
 const DEFAULT_LNG = 26.233512501537124;
 const DEFAULT_ZOOM = 2;
@@ -28,6 +30,8 @@ class App {
     constructor(mapId) {
         this.map = null;
         this.mapId = mapId;
+
+        // Models
         this.data = new Data(SPREADSHEET_CSV, this.onSelectDropdownItem.bind(this));
         this.markers = null;        // L.markerClusterGroup()
         this.details = null;        // bootstrap.Collapse()
@@ -37,6 +41,7 @@ class App {
         this.countryView = new DropdownView("nav-country","nav-country-menu","Country");
         this.deptView = new DropdownView("nav-dept","nav-dept-menu","Department");
         this.studioView = new DropdownView("nav-studio","nav-studio-menu","Studio");
+        this.detailView = new DetailView("details");
     }
 
     // Main function
@@ -46,6 +51,25 @@ class App {
         this.importScript(ROOT_URL + "/js/leaflet.js", function () {
             this.importScript(ROOT_URL + "/js/leaflet.markercluster.js", this.loadCluster.bind(this));
         }.bind(this));
+    }
+
+    // SelectMarkers makes visible markers and then
+    // zooms the map to those markers
+    SelectMarkers(rows) {
+        var group = new L.featureGroup();
+        this.markers.clearLayers();
+        rows.forEach((row) => {
+            var layer = this.loadRow(row);
+            if(layer) {
+                group.addLayer(layer);
+            }
+        });
+        if(rows.length) {
+            this.map.fitBounds(group.getBounds(),{
+                padding: [20,20],
+                maxZoom: MAX_ZOOM,
+            });      
+        }
     }
 
     // import script into document and callback when done
@@ -78,11 +102,15 @@ class App {
         document.getElementById("nav-reset").addEventListener("click", () => {
             // Reset map state
             this.map.setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
+
             // Hide details pane
             this.details.hide();
 
             // Reset data
             this.data.Reset();
+
+            // Select all rows
+            this.SelectMarkers(this.data.Values());
 
             // Update counter view
             this.counterView.Set(this.data.Counter());
@@ -123,11 +151,11 @@ class App {
     // Return the icon for a job
     jobIcon(row) {
         return L.icon({
-            iconUrl: ROOT_URL + "/img/geo-alt-fill.svg",
-            iconSize: [30, 75],
-            iconAnchor: [15, 45],
+            iconUrl: MARKER_URL,
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
             popupAnchor: [0, -10],
-            className: 'job-icon',
+            className: 'job-marker',
         });
     }
 
@@ -135,12 +163,14 @@ class App {
     // cluster represents
     clusterIcon(cluster) {
         var img = document.createElement("img");
-        img.src = ROOT_URL + "/img/geo-alt-fill.svg";
+        img.src = CLUSTER_URL;
         img.className = "cluster-icon";
+        img.width = "30";
+        img.height = "30";
         return L.divIcon({
             html: img.outerHTML + "<strong>" + cluster.getChildCount() + "</strong>",
-            iconSize: [30, 75],
-            iconAnchor: [15, 45],
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
             className: "cluster-marker",
         })
     }
@@ -150,7 +180,8 @@ class App {
         this.data.Download(this.loadRow.bind(this));
     }
 
-    // Place marker when a row is loaded
+    // Place marker when a row is loaded and return the
+    // marker if it has been added to the map
     loadRow(row) {
         if (row) {
             var latlng = row.LatLng();
@@ -167,6 +198,7 @@ class App {
                 marker.addEventListener('popupclose', () => {
                     this.onPopupClose(marker, row);
                 });
+                return marker
             }
         } else {
             // When all the rows have been loaded, populate dropdowns
@@ -182,7 +214,7 @@ class App {
     // Marker clicked
     onClickMarker(marker, row) {
         // Update card with details
-        this.updateDetails(row);
+        this.detailView.Set(row);
         // Show details
         this.details.show();
         // Update map size
@@ -201,7 +233,7 @@ class App {
 
     // Update filtering display
     onSelectDropdownItem(id,value,rows) {
-        // Reset all views
+        // Reset dropdown views
         this.countryView.Reset();
         this.deptView.Reset();
         this.studioView.Reset();
@@ -216,75 +248,23 @@ class App {
             break
         case "nav-dept":
             this.deptView.Select(value);
-            break    
-        } 
+            break  
+        default:
+            rows = this.data.Values();
+        }
+
+        // SelectMarkers from rows
+        this.SelectMarkers(rows);
+
+        // If there's a single row then show details pane or else hide
+        if(rows && rows.length == 1) {
+            this.detailView.Set(rows[0]);
+            this.details.show();
+        } else {
+            this.details.hide();
+        }
         
         // Update counter
         this.counterView.Set(rows.length);
-    }
-
-    // Update details
-    updateDetails(row) {
-        // Scroll pane to top
-        document.querySelector("#details .card-list").parentNode.scrollTop = 0;
-        // Set title, subtitle
-        document.querySelector("#details .card-title").innerText = row.Title();
-        document.querySelector("#details .card-subtitle").innerText = row.Studio();
-        // List of details
-        document.querySelector("#details .card-list").innerHTML = "";
-        row.Keys().forEach((k) => {
-            // Exclude certain items
-            switch (k) {
-                case "Longitude":
-                case "Latitude":
-                case "Job Status":
-                case "Country":
-                case "Job":
-                case "Studio":
-                    break;
-                default:
-                    this.createListItem(document.querySelector("#details .card-list"), k, row.Get(k));
-            }
-        });
-    }
-
-    // Generate a list item
-    createListItem(node, key, value) {
-        var dt = document.createElement("dt");
-        var dd = document.createElement("dd");
-        dt.innerText = key;
-        dt.className = "col-sm-4";
-        dd.innerText = value;
-        dd.className = "col-sm-8";
-        node.appendChild(dt);
-        node.appendChild(dd);
-    }
-
-    // Populate dropdowns
-    populateDropdown(q, group) {
-        var node = document.querySelector(q);
-        if (node) {
-            node.innerHTML = "";
-            group.Values().forEach((value) => {
-                node.appendChild(this.createDropdownItem(q, value, group));
-            });
-        }
-    }
-
-    // Create a dropdown item
-    createDropdownItem(q, value, group) {
-        var a = document.createElement("a");
-        var li = document.createElement("li");
-        li.appendChild(a);
-        a.className = "dropdown-item";
-        a.href = "#";
-        a.innerText = value;
-        a.addEventListener('click', () => {
-            // Fire event to filter markers to group
-            group.onClick(value);
-            // Add in one active
-            a.className = "dropdown-item active";
-        })
-        return li;
     }
 }
