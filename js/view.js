@@ -4,17 +4,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
 
-// Map roles to colours
+// Map roles to colours. Empty key is default
 const Palette  = {
+    "": "carrot",
     "Production": "turquoise",
     "Executive": "peter-river",
     "Animation": "amethyst",
-    "Art Direction": "belize-hole",
-    "Compositing": "midnight-blue",
-    "VFX Supervision": "alizarin",
-    "CG": "concrete",
-    "FX": "wisteria",
-    "": "clouds",
+    "Art Direction": "alizarin",
+    "Compositing": "sunflower",
+    "VFX Supervision": "midnight-blue",
+    "CG": "carrot",
+    "FX": "carrot",
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,14 +131,13 @@ export class DropdownView {
 // DETAIL VIEW
 
 export class DetailView {
-    constructor(node) {
+    constructor(baseurl,node) {
+        this.baseurl = baseurl;
         this.node = document.getElementById(node);
     }
 
     // Set details from row
     Set(row) {
-        // Scroll pane to top
-        this.node.querySelector(".card-list").parentNode.scrollTop = 0;
         // Set title, subtitle
         this.node.querySelector(".card-title").innerText = row.Title();
         this.node.querySelector(".card-subtitle").innerText = row.Studio();
@@ -154,10 +153,19 @@ export class DetailView {
                 case "Job":
                 case "Studio":
                     break;
+                case "Glassdoor Score (5)":
+                    var value = parseFloat(row.Get(k));
+                    if(value >= 0 && value <= 5) {
+                        this.createRatingItem(this.node.querySelector(".card-list"),k,value);
+                        break    
+                    }
                 default:
                     this.createListItem(this.node.querySelector(".card-list"), k, row.Get(k));
             }
         });
+
+        // Scroll pane to top
+        this.node.querySelector(".card-list").parentNode.scrollTop = 0;
     }
 
     // Generate a list item
@@ -171,8 +179,55 @@ export class DetailView {
         node.appendChild(dt);
         node.appendChild(dd);
     }
+
+    // Generate a rating item
+    createRatingItem(node, key, value) {
+        var dt = document.createElement("dt");
+        var dd = document.createElement("dd");
+        var rating = new RatingView(this.baseurl,dd);
+        dt.innerText = key;
+        dt.className = "col-sm-4";
+        dd.className = "col-sm-8";
+        node.appendChild(dt);
+        node.appendChild(dd);        
+        rating.Set(value);
+    }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// RATING VIEW
+
+export class RatingView {
+    constructor(baseurl,node) {
+        this.baseurl = baseurl;
+        this.node = node;
+    }  
+    Set(value) {
+        this.node.innerHTML = "";
+        this.node.appendChild(document.createTextNode("" + value));
+        for(var i = 0; i < 5; i++) {
+            if(value <= 0.0) {
+                this.node.appendChild(this.createStar());
+            } else if(value >= 1.0) {                
+                this.node.appendChild(this.createStar("fill"));
+            } else {
+                this.node.appendChild(this.createStar("half"));
+            }
+            value = value - 1.0;
+        }
+    }
+    createStar(value) {
+        var img = document.createElement("img");
+        if(value) {
+            img.src = this.baseurl + "/img/star-" + value + ".svg";
+        } else {
+            img.src = this.baseurl + "/img/star" + ".svg";
+        }
+        img.className = "img-fluid";
+        return img;
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // PRIVATE METHODS

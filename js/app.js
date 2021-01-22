@@ -39,7 +39,7 @@ class App {
         this.countryView = new DropdownView("nav-country","nav-country-menu","Country");
         this.deptView = new DropdownView("nav-dept","nav-dept-menu","Department");
         this.studioView = new DropdownView("nav-studio","nav-studio-menu","Studio");
-        this.detailView = new DetailView("details");
+        this.detailView = new DetailView(ROOT_URL,"details");
         this.markerView = new MarkerView(ROOT_URL);
     }
 

@@ -2,7 +2,21 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0" y="0" width="16" height="16" viewBox="0, 0, 16, 16">
   <style>
-    @import url(fill.css);
+    .fill-turquoise { fill: #00BD9C; }
+    .fill-emerald { fill: #52D88B; }
+    .fill-peter-river { fill: #2C96DF; }
+    .fill-amethyst { fill: #9C56B8; }
+    .fill-wet-asphalt { fill:#34495E; }
+    .fill-green-sea { fill: #189F86; }
+    .fill-nephritis { fill: #28AE61; }
+    .fill-belize-hole { fill: #2A80B9; }
+    .fill-wisteria { fill: #2A80B9; }
+    .fill-midnight-blue { fill: #2D3E50; }
+    .fill-sunflower { fill: #F1C50D; }
+    .fill-carrot { fill: #E77E22; }
+    .fill-alizarin { fill: #E74D3D; }
+    .fill-clouds { fill: #ECF0F1; }
+    .fill-concrete { fill: #95A5A5; }
   </style>
   <g id="layer">
     <path d="M8,16 C8,16 14,10.314 14,6 C14,2.686 11.314,0 8,0 C4.686,0 2,2.686 2,6 C2,10.314 8,16 8,16 z" class="fill-belize-hole"/>
