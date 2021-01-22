@@ -1,6 +1,6 @@
 
 import Data from "./data.js";
-import { CounterView, DropdownView, DetailView } from "./view.js";
+import { CounterView, DropdownView, DetailView, MarkerView } from "./view.js";
 
 /////////////////////////////////////////////////////////////////////
 // CONSTANTS
@@ -9,12 +9,10 @@ const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raN
 const MAPBOX_TOKEN = "pk.eyJ1IjoiZGp0aG9ycGUiLCJhIjoiY2tqeTZ2MXptMGFqYTJvbW5veXN6ZzdmNyJ9.LDOhC3y0Py3W7P1bQ5Vbeg";
 const TILE_URL = "//api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}";
 const ROOT_URL = "/vfxhiremap";
-const MARKER_URL = ROOT_URL + "/img/marker-icon.svg";
-const CLUSTER_URL = ROOT_URL + "/img/cluster-icon.svg";
 const DEFAULT_LAT = 15.017689139787977;
 const DEFAULT_LNG = 26.233512501537124;
 const DEFAULT_ZOOM = 2;
-const MAX_ZOOM = 20;
+const MAX_ZOOM = 12;
 
 ////////////////////////////////////////////////////////////////////////////////
 // BOOTSTRAP APP
@@ -42,6 +40,7 @@ class App {
         this.deptView = new DropdownView("nav-dept","nav-dept-menu","Department");
         this.studioView = new DropdownView("nav-studio","nav-studio-menu","Studio");
         this.detailView = new DetailView("details");
+        this.markerView = new MarkerView(ROOT_URL);
     }
 
     // Main function
@@ -67,6 +66,7 @@ class App {
         if(rows.length) {
             this.map.fitBounds(group.getBounds(),{
                 padding: [20,20],
+
                 maxZoom: MAX_ZOOM,
             });      
         }
@@ -126,6 +126,7 @@ class App {
         this.map = L.map(this.mapId).setView([DEFAULT_LAT, DEFAULT_LNG], DEFAULT_ZOOM);
         L.tileLayer(TILE_URL, {
             tileSize: 512,
+            minZoom: DEFAULT_ZOOM,
             maxZoom: MAX_ZOOM,
             zoomOffset: -1,
             id: 'mapbox/light-v10',
@@ -143,36 +144,9 @@ class App {
         this.loadButtons();
         this.markers = L.markerClusterGroup({
             maxClusterRadius: 25,
-            iconCreateFunction: this.clusterIcon.bind(this),
+            iconCreateFunction: this.markerView.Cluster.bind(this.markerView),
         });
         this.map.addLayer(this.markers);
-    }
-
-    // Return the icon for a job
-    jobIcon(row) {
-        return L.icon({
-            iconUrl: MARKER_URL,
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            popupAnchor: [0, -10],
-            className: 'job-marker',
-        });
-    }
-
-    // Return the cluster icon with the number of jobs the
-    // cluster represents
-    clusterIcon(cluster) {
-        var img = document.createElement("img");
-        img.src = CLUSTER_URL;
-        img.className = "cluster-icon";
-        img.width = "30";
-        img.height = "30";
-        return L.divIcon({
-            html: img.outerHTML + "<strong>" + cluster.getChildCount() + "</strong>",
-            iconSize: [30, 30],
-            iconAnchor: [15, 30],
-            className: "cluster-marker",
-        })
     }
 
     // Load the CSV data
@@ -187,7 +161,7 @@ class App {
             var latlng = row.LatLng();
             if (latlng) {
                 var marker = L.marker(latlng, {
-                    icon: this.jobIcon(row),
+                    icon: this.markerView.Marker(row),
                     title: row.Label(),
                 });
                 marker.bindPopup(row.Label());

@@ -1,5 +1,4 @@
 
-
 #map {
     width: auto;
     height: 0;
@@ -20,7 +19,6 @@
     top: 2px;
     width: 16px;
     color: white;
-    background-color:black;
     border-radius: 50%;
 }
 
@@ -29,3 +27,83 @@
     max-height: 200px;
     overflow-x: hidden;
 }
+
+.nav-right img {
+    width: 150px;
+}
+
+.details-card {
+    height: 100%;
+}
+
+.text-bullet {
+    background-repeat: no-repeat;
+    background-position-x: 2px;
+    background-position-y: 8px;
+    padding-left: 20px;
+    display: block;
+}
+
+/* COLOR PALETTE */
+.bg-turquoise { background-color: #00BD9C; }
+.fill-turquoise { fill: #00BD9C; }
+.bg-image-turquoise { background-image: url('../img/marker-icon-turquoise.svg'); }
+
+.bg-emerald { background-color: #52D88B; }
+.fill-emerald { fill: #52D88B; }
+.bg-image-emerald { background-image: url('../img/marker-icon-emerald.svg'); }
+
+.bg-peter-river { background-color: #2C96DF; }
+.fill-peter-river { fill: #2C96DF; }
+.bg-image-peter-river { background-image: url('../img/marker-icon-peter-river.svg'); }
+
+.bg-amethyst { background-color: #9C56B8; }
+.fill-amethyst { fill: #9C56B8; }
+.bg-image-amethyst { background-image: url('../img/marker-icon-amethyst.svg'); }
+
+.bg-wet-asphalt { background-color: #34495E; }
+.fill-wet-asphalt { fill:#34495E; }
+.bg-image-wet-asphalt { background-image: url('../img/marker-icon-wet-asphalt.svg'); }
+
+.bg-green-sea { background-color: #189F86; }
+.fill-green-sea { fill: #189F86; }
+.bg-image-green-sea { background-image: url('../img/marker-icon-green-sea.svg'); }
+
+.bg-nephritis { background-color: #28AE61; }
+.fill-nephritis { fill: #28AE61; }
+.bg-image-nephritis { background-image: url('../img/marker-icon-nephritis.svg'); }
+
+.bg-belize-hole { background-color: #2A80B9; }
+.fill-belize-hole { fill: #2A80B9; }
+.bg-image-belize-hole { background-image: url('../img/marker-icon-belize-hole.svg'); }
+
+.bg-wisteria { background-color: #2A80B9; }
+.fill-wisteria { fill: #2A80B9; }
+.bg-image-wisteria { background-image: url('../img/marker-icon-wisteria.svg'); }
+
+
+.bg-midnight-blue { background-color: #2D3E50; }
+.fill-midnight-blue { fill: #2D3E50; }
+.bg-image-midnight-blue { background-image: url('../img/marker-icon-midnight-blue.svg'); }
+
+.bg-sunflower { background-color: #F1C50D; }
+.fill-sunflower { fill: #F1C50D; }
+.bg-image-sunflower { background-image: url('../img/marker-icon-sunflower.svg'); }
+
+.bg-carrot { background-color: #E77E22; }
+.fill-carrot { fill: #E77E22; }
+.bg-image-carrot { background-image: url('../img/marker-icon-carrot.svg'); }
+
+.bg-alizarin { background-color: #E74D3D; }
+.fill-alizarin { fill: #E74D3D; }
+.bg-image-alizarin { background-image: url('../img/marker-icon-alizarin.svg'); }
+
+.bg-clouds { background-color: #ECF0F1; }
+.fill-clouds { fill: #ECF0F1; }
+.bg-image-clouds { background-image: url('../img/marker-icon-clouds.svg'); }
+
+.bg-concrete { background-color: #95A5A5; }
+.fill-concrete { fill: #95A5A5; }
+.bg-image-concrete { background-image: url('../img/marker-icon-concrete.svg'); }
+
+

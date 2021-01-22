@@ -1,5 +1,22 @@
 
 
+
+////////////////////////////////////////////////////////////////////////////////
+// CONSTANTS
+
+// Map roles to colours
+const Palette  = {
+    "Production": "turquoise",
+    "Executive": "peter-river",
+    "Animation": "amethyst",
+    "Art Direction": "belize-hole",
+    "Compositing": "midnight-blue",
+    "VFX Supervision": "alizarin",
+    "CG": "concrete",
+    "FX": "wisteria",
+    "": "clouds",
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // COUNTER VIEW
 
@@ -17,6 +34,40 @@ export class CounterView {
         }
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// MARKER VIEW
+
+export class MarkerView {
+    constructor(baseurl) {
+        this.baseurl = baseurl;
+    }
+    Cluster(cluster) {
+        var img = document.createElement("img");
+        img.src = this.baseurl + "/img/cluster-icon.svg";
+        img.className = "cluster-icon";
+        img.width = "30";
+        img.height = "30";
+        return L.divIcon({
+            html: img.outerHTML + "<strong>" + cluster.getChildCount() + "</strong>",
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            className: "cluster-marker",
+        })
+    }
+
+    Marker(row) {
+        var color = colorForValue(row.Dept());
+        return L.icon({
+            iconUrl: this.baseurl + "/img/marker-icon-" + color + ".svg",
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            popupAnchor: [0, -10],
+            className: 'job-marker',
+        });
+    }
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // DROPDOWN VIEW
@@ -40,7 +91,7 @@ export class DropdownView {
     Reset() {
         // Disable dropdown item active state for all menus
         this.menu.querySelectorAll("a.dropdown-item").forEach((node) => {
-            node.className = "dropdown-item";
+            node.classList.remove("active");
         });
         // Set the button text
         this.button.innerText = this.title;
@@ -57,19 +108,23 @@ export class DropdownView {
     createDropdownItem(value, group) {
         var a = document.createElement("a");
         var li = document.createElement("li");
-        li.appendChild(a);
+        li.appendChild(a);        
         a.className = "dropdown-item";
         a.href = "#";
-        a.innerText = value;
+        a.innerHTML = value;
+        if(group.Id() == "nav-dept") {
+            var color = colorForValue(value);
+            a.className = "dropdown-item text-bullet bg-image-" + color;
+        }
         a.addEventListener('click', () => {
+            // Make active
+            a.classList.add("active");
+
             // Fire event to filter markers to group
             group.onClick(value);
-
-            // Add in one active
-            a.className = "dropdown-item active";
         })
         return li;
-    }    
+    } 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,3 +173,15 @@ export class DetailView {
     }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// PRIVATE METHODS
+
+function colorForValue(value) {
+    var color = Palette[value];
+    if(color) {
+        return color            
+    } else {
+        return Palette[""];
+    }
+}

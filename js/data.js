@@ -187,6 +187,9 @@ class Group {
 		});
 		return keys;
 	}
+	Id() {
+		return this.id;
+	}
 	onClick(value) {
 		var rows = new Array();
 		if(value) {
