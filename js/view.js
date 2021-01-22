@@ -202,11 +202,12 @@ export class RatingView {
     constructor(baseurl,node) {
         this.baseurl = baseurl;
         this.node = node;
+        this.outof = 5;
     }  
     Set(value) {
         this.node.innerHTML = "";
         this.node.appendChild(document.createTextNode("" + value));
-        for(var i = 0; i < 5; i++) {
+        for(var i = 0; i < this.outof; i++) {
             if(value <= 0.0) {
                 this.node.appendChild(this.createStar());
             } else if(value >= 1.0) {                
