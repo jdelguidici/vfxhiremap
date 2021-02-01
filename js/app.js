@@ -93,13 +93,11 @@ class App {
         });
         document.getElementById('details').addEventListener('show.bs.collapse', () => {
             // Set maximum height to the height of the map 
-            document.getElementById('details').style.maxHeight = document.getElementById('map').clientHeight + "px";
+            //document.getElementById('details').style.maxHeight = document.getElementById('map').clientHeight + "px";
         });
         document.getElementById('details').addEventListener('shown.bs.collapse', () => {
             // Reset map state
             this.map.invalidateSize();
-
-            console.log("shown=",document.getElementById('details').clientHeight);
         });
         document.getElementById('details').addEventListener('hidden.bs.collapse', () => {
             // Reset map state
