@@ -150,7 +150,7 @@ class App {
         this.loadButtons();
         this.markers = L.markerClusterGroup({
             maxClusterRadius: 25,
-            spiderfyDistanceMultiplier: 2,
+            spiderfyDistanceMultiplier: 3,
             iconCreateFunction: this.markerView.Cluster.bind(this.markerView),
         });
         this.map.addLayer(this.markers);
