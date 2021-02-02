@@ -46,6 +46,10 @@
     display: block;
 }
 
+.card-list-parent {
+    position: relative;
+}
+
 .card-list {
     position: absolute;
     overflow: auto;
