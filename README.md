@@ -1,7 +1,8 @@
 # VFX Hire Map
 
 An example of how to use the Leaflet API with Mapbox in
-order to provide job positions on a map.
+order to provide job positions on a map, with clustering
+of roles where there are many roles in a similar location.
 
 ![Screenshot](doc/screenshot.png)
 
@@ -94,6 +95,7 @@ Your spreadsheet should at a minimum have a header to identify the rows and incl
 | Location of Job | Required for filtering. Country is interpreted from city or country within this cell.
 | Latitude | Required for marker. Potentially can be automated later.
 | Longitude | Required for marker. Potentially can be automated later.
+| Glassdoor Score (5) | If provided, should be a number between zero and five.
 
 When you change the data on your spreadsheet, as long as you are automatically publishing, it should be reflected automatically on the map.
 
