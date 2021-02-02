@@ -1,6 +1,6 @@
 
 import Data from "./data.js";
-import { CounterView, DropdownView, DetailView, MarkerView } from "./view.js";
+import { CounterView, DropdownView, DetailView, MarkerView, CollapseView } from "./view.js";
 
 /////////////////////////////////////////////////////////////////////
 // CONSTANTS
@@ -88,18 +88,17 @@ class App {
     // initialise buttons and details. Map is invalidated (redrawn)
     // whenever the details window is open or closed
     loadButtons() {
-        this.details = new bootstrap.Collapse(document.getElementById('details'), {
-            toggle: false,
-        });
-        document.getElementById('details').addEventListener('show.bs.collapse', () => {
-            // Set maximum height to the height of the map 
-            //document.getElementById('details').style.maxHeight = document.getElementById('map').clientHeight + "px";
-        });
-        document.getElementById('details').addEventListener('shown.bs.collapse', () => {
+        this.details = new CollapseView(document.getElementById('details'));
+
+        // Do some swizzling here
+        this.details.hide();
+        this.map.invalidateSize();
+
+        document.getElementById('details').addEventListener('show', () => {
             // Reset map state
             this.map.invalidateSize();
         });
-        document.getElementById('details').addEventListener('hidden.bs.collapse', () => {
+        document.getElementById('details').addEventListener('hide', () => {
             // Reset map state
             this.map.invalidateSize();
         });
@@ -123,6 +122,10 @@ class App {
             // Hide details pane
             this.details.hide();
         });
+        this.map.addEventListener('zoomend', () => {
+            window.scrollTo(0,0);
+        });
+
     }
 
     // Create the map and all associated marker icons

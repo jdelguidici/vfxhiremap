@@ -142,10 +142,18 @@ export class DetailView {
         this.node.querySelector(".card-title").innerText = row.Title();
         this.node.querySelector(".card-subtitle").innerText = row.Studio();
         // List of details
-        this.node.querySelector(".card-list").innerHTML = "";
+        var cardList = this.node.querySelector(".card-list");
+        if(cardList) {
+            this.SetDetails(row,cardList);
+        }
+    }
+    SetDetails(row,node) {
+        node.innerHTML = "";
+        var dl = document.createElement("DL");
+        dl.className = "row";
         row.Keys().forEach((k) => {
-            // Exclude certain items
             switch (k) {
+                // Exclude certain items
                 case "Longitude":
                 case "Latitude":
                 case "Job Status":
@@ -153,19 +161,20 @@ export class DetailView {
                 case "Job":
                 case "Studio":
                     break;
+                // Turn Glassdoor rating into rating item out of five
                 case "Glassdoor Score (5)":
                     var value = parseFloat(row.Get(k));
                     if(value >= 0 && value <= 5) {
-                        this.createRatingItem(this.node.querySelector(".card-list"),k,value);
+                        this.createRatingItem(dl,k,value);
                         break    
                     }
+                // Otherwise standard list item
                 default:
-                    this.createListItem(this.node.querySelector(".card-list"), k, row.Get(k));
+                    this.createListItem(dl, k, row.Get(k));
             }
         });
-
-        // Scroll pane to top
-        this.node.querySelector(".card-list").parentNode.scrollTop = 0;
+        node.appendChild(dl);
+        node.scrollTo(0,0);
     }
 
     // Generate a list item
@@ -173,9 +182,9 @@ export class DetailView {
         var dt = document.createElement("dt");
         var dd = document.createElement("dd");
         dt.innerText = key;
-        dt.className = "col-sm-4";
+        dt.className = "col-sm-3";
         dd.innerText = value;
-        dd.className = "col-sm-8";
+        dd.className = "col-sm-9";
         node.appendChild(dt);
         node.appendChild(dd);
     }
@@ -186,8 +195,8 @@ export class DetailView {
         var dd = document.createElement("dd");
         var rating = new RatingView(this.baseurl,dd);
         dt.innerText = key;
-        dt.className = "col-sm-4";
-        dd.className = "col-sm-8";
+        dt.className = "col-sm-3";
+        dd.className = "col-sm-9";
         node.appendChild(dt);
         node.appendChild(dd);        
         rating.Set(value);
@@ -227,6 +236,22 @@ export class RatingView {
         }
         img.className = "img-fluid";
         return img;
+    }
+}
+
+export class CollapseView {
+    constructor(node) {
+        this.node = node;
+    }
+    show() {
+        this.node.style.visibility = "visible";
+        this.node.style.width = "50%";
+        this.node.dispatchEvent(new Event("show"));
+    }
+    hide() {
+        this.node.style.visibility = "collapse";
+        this.node.style.width = "0px";
+        this.node.dispatchEvent(new Event("hide"));
     }
 }
 

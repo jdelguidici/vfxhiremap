@@ -2,8 +2,14 @@
 #map {
     width: auto;
     height: 0;
-    padding-bottom: 56.247%; /* Set ratio: width * 100 / height */
+    padding-bottom: 53%;
     background-color: #ccc;
+}
+
+#details {
+    width: auto;
+    background-color: #ccc;
+    visibility: collapse;
 }
 
 .cluster-icon {
@@ -32,16 +38,22 @@
     width: 150px;
 }
 
-.details-card {
-    height: 100%;
-}
-
 .text-bullet {
     background-repeat: no-repeat;
     background-position-x: 2px;
     background-position-y: 8px;
     padding-left: 20px;
     display: block;
+}
+
+.card-list {
+    position: absolute;
+    overflow: auto;
+    max-height: 100%;
+    bottom: 0px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
 }
 
 /* COLOR PALETTE */
