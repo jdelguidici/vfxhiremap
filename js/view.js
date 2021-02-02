@@ -182,9 +182,9 @@ export class DetailView {
         var dt = document.createElement("dt");
         var dd = document.createElement("dd");
         dt.innerText = key;
-        dt.className = "col-sm-3";
+        dt.className = "col-sm-4";
         dd.innerText = value;
-        dd.className = "col-sm-9";
+        dd.className = "col-sm-8";
         node.appendChild(dt);
         node.appendChild(dd);
     }
@@ -195,8 +195,8 @@ export class DetailView {
         var dd = document.createElement("dd");
         var rating = new RatingView(this.baseurl,dd);
         dt.innerText = key;
-        dt.className = "col-sm-3";
-        dd.className = "col-sm-9";
+        dt.className = "col-sm-4";
+        dd.className = "col-sm-8";
         node.appendChild(dt);
         node.appendChild(dd);        
         rating.Set(value);
