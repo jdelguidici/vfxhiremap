@@ -1,3 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
-  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+ <style>
+    .fill-turquoise { fill: #00BD9C; }
+    .fill-emerald { fill: #52D88B; }
+    .fill-peter-river { fill: #2C96DF; }
+    .fill-amethyst { fill: #9C56B8; }
+    .fill-wet-asphalt { fill:#34495E; }
+    .fill-green-sea { fill: #189F86; }
+    .fill-nephritis { fill: #28AE61; }
+    .fill-belize-hole { fill: #2A80B9; }
+    .fill-wisteria { fill: #2A80B9; }
+    .fill-midnight-blue { fill: #2D3E50; }
+    .fill-sunflower { fill: #F1C50D; }
+    .fill-carrot { fill: #E77E22; }
+    .fill-alizarin { fill: #E74D3D; }
+    .fill-clouds { fill: #ECF0F1; }
+    .fill-concrete { fill: #95A5A5; }
+  </style>
+  <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.283.95l-3.523 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" class="fill-sunflower"/>
 </svg>

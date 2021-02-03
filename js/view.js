@@ -140,14 +140,10 @@ export class DetailView {
     Set(row) {
         // Set title, subtitle
         this.node.querySelector(".card-title").innerText = row.Title();
-        this.node.querySelector(".card-subtitle").innerText = row.Studio();
-        // List of details
-        var cardList = this.node.querySelector(".card-list");
-        if(cardList) {
-            this.SetDetails(row,cardList);
-        }
+        this.SetSubtitle(this.node.querySelector(".card-subtitle"),row);
+        this.SetDetails(this.node.querySelector(".card-list"),row);
     }
-    SetDetails(row,node) {
+    SetDetails(node,row) {
         node.innerHTML = "";
         var dl = document.createElement("DL");
         dl.className = "row";
@@ -160,12 +156,16 @@ export class DetailView {
                 case "Country":
                 case "Job":
                 case "Studio":
+                case "Company URL":
                     break;
                 // Turn Glassdoor rating into rating item out of five
                 case "Glassdoor Score (5)":
                     var value = parseFloat(row.Get(k));
                     if(value >= 0 && value <= 5) {
                         this.createRatingItem(dl,k,value);
+                        break    
+                    } else {
+                        this.createListItem(dl,k,row.Get(k));
                         break    
                     }
                 // Otherwise standard list item
@@ -175,6 +175,25 @@ export class DetailView {
         });
         node.appendChild(dl);
         node.scrollTo(0,0);
+    }
+
+    SetSubtitle(node,row) {
+        node.innerHTML = "";
+        var url = row.StudioUrl();
+        if(url) {
+            var a = document.createElement("A");
+            a.href = url
+            a.innerText = row.Studio();
+            a.className = "text-decoration-none fw-bold";
+            a.style.color = "inherit";
+            a.target = "_blank";
+            node.appendChild(a);
+            var img = document.createElement("IMG");
+            img.src = this.baseurl + "/img/link-45deg.svg"
+            a.appendChild(img);
+        } else {
+            node.innerText = row.Studio();
+        }
     }
 
     // Generate a list item
@@ -214,20 +233,20 @@ export class RatingView {
         this.outof = 5;
     }  
     Set(value) {
-        this.node.innerHTML = "";
-        this.node.appendChild(document.createTextNode("" + value));
+        var rating = value
+        this.node.innerHTML = "";     
         for(var i = 0; i < this.outof; i++) {
             if(value <= 0.0) {
-                this.node.appendChild(this.createStar());
+                this.node.appendChild(this.createStar("",rating));
             } else if(value >= 1.0) {                
-                this.node.appendChild(this.createStar("fill"));
+                this.node.appendChild(this.createStar("fill",rating));
             } else {
-                this.node.appendChild(this.createStar("half"));
+                this.node.appendChild(this.createStar("half",rating));
             }
             value = value - 1.0;
         }
     }
-    createStar(value) {
+    createStar(value,text) {
         var img = document.createElement("img");
         if(value) {
             img.src = this.baseurl + "/img/star-" + value + ".svg";
@@ -235,6 +254,7 @@ export class RatingView {
             img.src = this.baseurl + "/img/star" + ".svg";
         }
         img.className = "img-fluid";
+        img.title = "" + text;
         return img;
     }
 }
