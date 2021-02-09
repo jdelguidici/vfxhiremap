@@ -3,7 +3,7 @@ import Data from "./data.js";
 import { CounterView, DropdownView, DetailView, MarkerView, CollapseView } from "./view.js";
 
 /////////////////////////////////////////////////////////////////////
-// CONSTANTS
+// CONSTANT
 
 const SPREADSHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf6raNW5a9rdQ0HThuTnVAssnSxe3ZWDGDoz3CaAkC8g-fGRZBWOk5_7_3lqGVsiaeIxe5of8r38L1/pub?gid=1805947673&single=true&output=csv";
 const MAPBOX_TOKEN = "pk.eyJ1IjoiamVyZW15LXZmeGhpcmUiLCJhIjoiY2treTBqMDB2MGJ3czJvcDBwaHpsNDJsYyJ9.JrpGu_C3yb9Sg9rCaAfCsA";
